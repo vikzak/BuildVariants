@@ -16,9 +16,29 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // ключи
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("keystore.properties").newDataInputStream ())
+        def storePassword = properties.getProperty("storePassword", "")
+        def keyAlias = properties.getProperty("keyAlias", "")
+        def keyPassword = properties.getProperty("keyPassword", "")
+        //it.buildConfigField "String", "MY_WEATHER_API_KEY", apiKey }
+
+    signingConfigs { release {
+        storeFile file("keystore_gb")
+        storePassword
+        //storePassword 'Qwerty123'
+        keyAlias
+        //keyAlias 'GeekBrains'
+        keyPassword
+        //keyPassword 'Qwerty123'
+    } }
+}
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "TYPE", '"RELEASE"'
         }
@@ -43,7 +63,9 @@ android {
     buildFeatures {
         viewBinding true
     }
+
     flavorDimensions 'version'
+
     productFlavors {
         freeConfig {
             dimension 'version'
